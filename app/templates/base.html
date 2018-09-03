@@ -1,0 +1,74 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}土拨鼠快报{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="shortcut icon" href="{{ url_for('static', filename='label.ico') }}" type="image/x-icon">
+<link rel="icon" href="{{ url_for('static', filename='label.ico') }}" type="image/x-icon">
+{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="nav-header">
+            <a class="navbar-brand" href="/news">土拨鼠快报</a>
+        </div>
+
+        <div>
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="/news">快报</a></li>
+                <li><a href="/news/update">更新</a></li>
+
+                {% if current_user.is_authenticated %}
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        用户
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">资料</a></li>
+                        <li><a href="#">收藏</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{{ url_for("auth.logout") }}">注销</a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li><a href="{{ url_for("auth.login") }}">登陆</a></li>
+                {% endif %}
+
+            </ul>
+        </div>
+
+
+        <form class="navbar-form navbar-left" role="search">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="请输入">
+            </div>
+            <button type="submit" class="btn btn-default">
+                <!-- 搜索 -->
+                <a href="/news">搜索</a>
+            </button>
+        </form>
+
+    </div>
+
+</nav>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <!-- flash提示框 -->
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+    <!-- 正文 -->
+    {% block page_content %}{% endblock %}
+</div>
+    
+{% endblock %}

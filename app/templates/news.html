@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+<ul class="list-group">
+    {% for new in news %}
+        <li class="list-group-item"><a href={{new.link}} target="_blank">{{new.title}}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}
