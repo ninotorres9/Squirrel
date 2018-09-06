@@ -44,6 +44,25 @@ class User(UserMixin, db.Model):
         """
         self.passwordHash = generate_password_hash(password)
 
+    def generateResetToken(self, expiration=3600):
+        s = Serializer(current_app.config["SECRET_KEY"])
+        return s.dumps({"reset": self.id}).decode("utf-8")
+
+    @staticmethod
+    def resetPassword(token, newPassword):
+        s = Serializer(current_app.config["SECRET_KEY"])
+        try:
+            data = s.loads(token.encode("utf-8"))
+        except:
+            return False
+        # 获取user id
+        user = User.query.get(data.get("reset"))
+        if user is None:
+            return False
+        user.password = newPassword
+        db.session.add(user)
+        return True
+
     def generateConfirmationToken(self, expiration=3600):
         """
             生成带有时限的JSON WEB签名(令牌)

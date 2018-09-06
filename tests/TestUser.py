@@ -63,6 +63,25 @@ class UserTestCase(unittest.TestCase):
             email="superhamster@163.com", username="nino", password="abcabc")
         self.assertTrue(administrator.isAdministrator())
 
+    def testResetPassword(self):
+        self.assertFalse(User.resetPassword("error", "error"))
+
+        user = User(email="abc@163.com", username="nino", password="abc123")
+        db.session.add(user)
+        db.session.commit()
+        self.assertTrue(
+            User.query.filter_by(
+                email="abc@163.com").first().verifyPassword("abc123"))
+
+        token = user.generateResetToken()
+        user.resetPassword(token, "abcabca")
+        self.assertFalse(
+            User.query.filter_by(
+                email="abc@163.com").first().verifyPassword("abc123"))
+        self.assertTrue(
+            User.query.filter_by(
+                email="abc@163.com").first().verifyPassword("abcabca"))
+
 
 def main():
     unittest.main()

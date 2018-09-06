@@ -4,7 +4,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms import ValidationError
-from wtforms.validators import Required, Length, Email, Regexp, EqualTo
+from wtforms.validators import DataRequired, Required, Length, Email, Regexp, EqualTo
 from ..Models import User
 
 
@@ -27,7 +27,8 @@ class RegistrationForm(FlaskForm):
     password = PasswordField(
         "密码", validators=[Required(),
                           EqualTo("password2", "两次密码输入必须一致")])
-    password2 = PasswordField("确认密码", validators=[Required()])
+    password2 = PasswordField(
+        "确认密码", validators=[Required(), Length(8, 16, "密码需要8-16位")])
     submit = SubmitField("注册")
 
     def validateEmail(self, field):
@@ -39,3 +40,17 @@ class RegistrationForm(FlaskForm):
             raise ValidationError("该昵称已注册")
 
 
+class PasswordResetRequestForm(FlaskForm):
+    email = StringField(
+        "邮箱", validators=[DataRequired(),
+                          Length(1, 64),
+                          Email()])
+    submit = SubmitField("密码重置")
+
+
+class PasswordResetForm(FlaskForm):
+    password = PasswordField(
+        "新密码", validators=[DataRequired(),
+                           EqualTo("password2", "两次密码输入必须一致")])
+    password2 = PasswordField("确认密码", validators=[Required()])
+    submit = SubmitField("密码重置")
